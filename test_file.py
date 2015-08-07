@@ -203,3 +203,6 @@ if __name__ == '__main__':
         dc.stop()
     elif sys.argv[1] == 'restart':
         dc.restart()
+
+#http://www.jejik.com/articles/2007/02/a_simple_unix_linux_daemon_in_python/
+#42

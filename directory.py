@@ -1,38 +1,55 @@
 #! /usr/bi/python
 
 
-import os
-import os.path
+import commands
 import logging
+import os
+
+
+logging.basicConfig(level=logging.DEBUG)
 
 
 def make_pull_fetch(path):
-    for item in _get_dirs_path(path):
-        if '.git' in os.listdir(item):
-            os.system('git fetch')
-            os.system('git pull')
-            # return str(os.system('git remote -v'))
-
-def _check_if_dir(path):
-    if os.path.isdir(path):
-        return True
-    else:
-        # logging
-        return 'Insert correct path'
+    """Makes git fetch and git push
+    Args:
+        path: path to the main directory
+    """
+    try:
+        for item in _get_dirs_path(path):
+            if '.git' in os.listdir(item):
+                os.chdir(item)
+                git_link = commands.getoutput('git config --get remote.'
+                                              'origin.url')
+                os.system('git fetch')
+                pull_command = 'git pull ' + git_link
+                os.system(pull_command)
+    except TypeError:
+        logging.error('Please insert a correct path')
 
 
 def _get_list_of_dirs(path):
+    """Gets list of the directories are the main directory
+    Args:
+        path: path to the main directory
+    Return:
+        list of the directories
+    """
     try:
-        if _check_if_dir(path):
+        if os.path.isdir(path):
             return os.listdir(path)
     except OSError:
         return []
 
 
 def _get_dirs_path(path):
+    """Gets paths to the directories are the main directory
+    Args:
+        path: path to the main directory
+    Return:
+        list of the paths
+    """
     return (path + item for item in _get_list_of_dirs(path)
             if not item.startswith('.'))
-
 
 
 if __name__ == '__main__':

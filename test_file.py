@@ -1,6 +1,7 @@
 #! /usr/bin/python
 
 import sys, os, time, atexit, signal
+from time_module import timer
 
 # -- generic daemon base class ------------------------------------------ #
 
@@ -174,6 +175,7 @@ if __name__ == '__main__':
     dc = daemon_ctl(daemon_base, pidfile)
 
     if sys.argv[1] == 'start':
+        timer()
         dc.start()
     elif sys.argv[1] == 'stop':
         dc.stop()

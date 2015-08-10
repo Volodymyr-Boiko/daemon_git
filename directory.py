@@ -11,7 +11,7 @@ def make_pull_fetch(path):
         if '.git' in os.listdir(item):
             os.system('git fetch')
             os.system('git pull')
-
+            # return str(os.system('git remote -v'))
 
 def _check_if_dir(path):
     if os.path.isdir(path):

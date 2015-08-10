@@ -27,11 +27,12 @@ def get_dirs_path(path):
             if not item.startswith('.'))
 
 
-def ffff(path):
+def make_pull_fetch(path):
     for item in get_dirs_path(path):
         if '.git' in os.listdir(item):
+            os.system('git fetch')
             os.system('git pull')
 
 
 if __name__ == '__main__':
-    ffff('/Users/vboiko/workspace/')
+    make_pull_fetch('/Users/vboiko/workspace/')

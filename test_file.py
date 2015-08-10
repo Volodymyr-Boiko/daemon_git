@@ -81,23 +81,9 @@ class daemon_base:
 # -- daemon control class ----------------------------------------------- #
 
 class daemon_ctl:
-    """Control class for a daemon.
 
-    Usage:
-    >>>	dc = daemon_ctl(daemon_base, '/tmp/foo.pid')
-    >>>	dc.start()
-
-    This class is the control wrapper for the above (daemon_base)
-    class. It adds start/stop/restart functionality for it withouth
-    creating a new daemon every time.
-    """
     def __init__(self, daemon, pidfile, workdir='/'):
-        """Constructor.
 
-        @param daemon: daemon class (not instance)
-        @param pidfile: daemon pid file
-        @param workdir: daemon working directory
-        """
         self.daemon = daemon
         self.pidfile = pidfile
         self.workdir = workdir
@@ -105,7 +91,7 @@ class daemon_ctl:
     def start(self):
         """Start the daemon.
         """
-        try: # check for pidfile to see if the daemon already runs
+        try:
             with open(self.pidfile, 'r') as pf:
                 pid = int(pf.read().strip())
         except IOError: pid = None
@@ -121,23 +107,20 @@ class daemon_ctl:
         d.daemonize()
 
     def stop(self):
-        """Stop the daemon.
 
-        This is purely based on the pidfile / process control
-        and does not reference the daemon class directly.
-        """
-        try: # get the pid from the pidfile
+        try:
             with open(self.pidfile,'r') as pf:
                 pid = int(pf.read().strip())
-        except IOError: pid = None
+        except IOError:
+            pid = None
 
         if not pid:
             message = "pidfile {0} does not exist. " + \
                     "Daemon not running?\n"
             sys.stderr.write(message.format(self.pidfile))
-            return # not an error in a restart
+            return
 
-        try: # try killing the daemon process
+        try:
             while 1:
                 os.kill(pid, signal.SIGTERM)
                 time.sleep(0.1)
@@ -151,22 +134,14 @@ class daemon_ctl:
                 sys.exit(1)
 
     def restart(self):
-        """Restart the daemon.
-        """
         self.stop()
         self.start()
 
-# -- test logic --------------------------------------------------------- #
 
 if __name__ == '__main__':
-    """Daemon test logic.
 
-    This logic must be called as seperate executable (i.e. python3
-    daemon.py start/stop/restart).	See test_daemon.py for
-    implementation.
-    """
     usage = 'Missing parameter, usage of test logic:\n' + \
-            ' % python3 daemon.py start|restart|stop\n'
+            ' % python test_file.py start|restart|stop\n'
     if len(sys.argv) < 2:
         sys.stderr.write(usage)
         sys.exit(2)

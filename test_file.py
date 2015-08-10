@@ -1,26 +1,5 @@
 #! /usr/bin/python
 
-
-try:
-    import os
-    import sys
-    import time
-    import atexit
-    from signal import SIGTERM
-except StandardError, e:
-    import sys
-    print "Error while loading libraries: "
-    print e
-    sys.exit()
-
-"""\
-Daemon base and control class.
-
-This file contains the daemon base class for a UNIX daemon and the control
-class for it. See test logic at the end of file and test_daemon.py to
-understand how to use it.\
-"""
-
 import sys, os, time, atexit, signal
 
 # -- generic daemon base class ------------------------------------------ #
@@ -54,27 +33,24 @@ class daemon_base:
         if not os.path.isdir(self.workpath):
             self.perror('workpath does not exist!', '')
 
-        try: # exit first parent process
+        try:
             pid = os.fork()
             if pid > 0: sys.exit(0)
         except OSError as err:
             self.perror('fork #1 failed: {0}', err)
-
-        # decouple from parent environment
-        try: os.chdir(self.workpath)
+        try:
+            os.chdir(self.workpath)
         except OSError as err:
             self.perror('path change failed: {0}', err)
 
         os.setsid()
         os.umask(0)
 
-        try: # exit from second parent
+        try:
             pid = os.fork()
             if pid > 0: sys.exit(0)
         except OSError as err:
             self.perror('fork #2 failed: {0}', err)
-
-        # redirect standard file descriptors
         sys.stdout.flush()
         sys.stderr.flush()
         si = open(os.devnull, 'r')
@@ -203,6 +179,3 @@ if __name__ == '__main__':
         dc.stop()
     elif sys.argv[1] == 'restart':
         dc.restart()
-
-#http://www.jejik.com/articles/2007/02/a_simple_unix_linux_daemon_in_python/
-#42

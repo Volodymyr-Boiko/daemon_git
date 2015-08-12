@@ -10,19 +10,18 @@ logging.basicConfig(level=logging.DEBUG)
 
 
 def make_pull_fetch(path):
-    """Makes git fetch and git push
-    Args:
-        path: path to the main directory
-    """
     try:
         for item in _get_dirs_path(path):
-            if '.git' in os.listdir(item):
+            if os.path.isdir(item):
                 os.chdir(item)
-                git_link = commands.getoutput('git config --get remote.'
-                                              'origin.url')
-                os.system('git fetch')
-                pull_command = 'git pull ' + git_link
-                os.system(pull_command)
+                if '.git' in os.listdir(item):
+                    git_link = commands.getoutput('git config --get remote.'
+                                                  'origin.url')
+                    os.system('git fetch')
+                    pull_command = 'git pull ' + git_link
+                    os.system(pull_command)
+                else:
+                    make_pull_fetch(item + '/')
     except TypeError:
         logging.error('Please insert a correct path')
 
@@ -48,8 +47,8 @@ def _get_dirs_path(path):
     Return:
         list of the paths
     """
-    return (path + item for item in _get_list_of_dirs(path)
-            if not item.startswith('.'))
+    return [path + item for item in _get_list_of_dirs(path)
+            if not item.startswith('.')]
 
 
 if __name__ == '__main__':

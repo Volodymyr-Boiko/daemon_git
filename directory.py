@@ -17,7 +17,8 @@ def make_pull_fetch(path):
                 if '.git' in os.listdir(item):
                     git_link = commands.getoutput('git config --get remote.'
                                                   'origin.url')
-                    os.system('git fetch')
+                    if not _get_diff(item):
+                        os.system('git fetch')
                     pull_command = 'git pull ' + git_link
                     os.system(pull_command)
                 else:
@@ -51,5 +52,31 @@ def _get_dirs_path(path):
             if not item.startswith('.')]
 
 
+def _get_local_branches(path):
+    command = 'cd ' + path
+    os.system(command)
+    lst = []
+    for item in (commands.getoutput('git branch')).split('\n  '):
+        if item.startswith('* '):
+            lst.append(item[2:])
+        else:
+            lst.append(item)
+    return lst
+
+
+def _get_remote_branches(path):
+    command = 'cd ' + path
+    os.system(command)
+    return [item.split('/')[1] for item in commands.getoutput('git branch -r').split('\n  ')]
+
+
+def _get_diff(path):
+    if _get_local_branches(path) == _get_remote_branches(path):
+        return True
+    else:
+        return False
+
+
 if __name__ == '__main__':
     make_pull_fetch('/Users/vboiko/workspace/')
+    # print _get_local_branches('/Users/vboiko/workspace/daemon_git_python/')

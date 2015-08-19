@@ -53,6 +53,10 @@ def _get_dirs_path(path):
 
 
 def _get_local_branches(path):
+    """Gets a list of local branches
+    Args:
+        path: path to the a directory
+    returns: list of local branches"""
     command = 'cd ' + path
     os.system(command)
     lst = []
@@ -67,7 +71,8 @@ def _get_local_branches(path):
 def _get_remote_branches(path):
     command = 'cd ' + path
     os.system(command)
-    return [item.split('/')[1] for item in commands.getoutput('git branch -r').split('\n  ')]
+    return [item.split('/')[1] for item
+            in commands.getoutput('git branch -r').split('\n  ')]
 
 
 def _get_diff(path):

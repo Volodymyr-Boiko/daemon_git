@@ -12,7 +12,6 @@ logging.basicConfig(level=logging.DEBUG)
 def make_pull_fetch(path):
     try:
         for item in _get_dirs_path(path):
-            """dfghdfhf"""
             if os.path.isdir(item):
                 os.chdir(item)
                 if '.git' in os.listdir(item):
